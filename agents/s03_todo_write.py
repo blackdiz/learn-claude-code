@@ -106,6 +106,10 @@ class TodoManager:
         self.items = []
 
     def update(self, items: list) -> str:
+        # TodoWrite caps the plan at 20 items. This is a deliberate constraint against over-planning. Models tend to decompose tasks into increasingly fine-grained steps when unconstrained, producing 50-item plans where each step is trivial. Long plans are fragile: if step 15 fails, the remaining 35 steps may all be invalid. Short plans (under 20 items) stay at the right abstraction level and are easier to adapt when reality diverges from the plan.
+        # Alternatives Considered
+        # No cap would give the model full flexibility, but in practice leads to absurdly detailed plans. A dynamic cap (proportional to task complexity) would be smarter but adds complexity. The fixed cap of 20 is a simple heuristic that works well empirically -- most real coding tasks can be expressed in 5-15 meaningful steps.
+        #
         if len(items) > 20:
             raise ValueError("Max 20 todos allowed")
         validated = []
